@@ -6,9 +6,12 @@
     <title>My Inventory Manager</title>
     
     <!-- PWA Meta Tags -->
-    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiSW52ZW50b3J5IE1hbmFnZXIiLCJzaG9ydF9uYW1lIjoiSW52ZW50b3J5IiwiZGVzY3JpcHRpb24iOiJNeSBwZXJzb25hbCBpbnZlbnRvcnkgbWFuYWdlbWVudCBhcHAiLCJzdGFydF91cmwiOiIvIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2ZmZmZmZiIsInRoZW1lX2NvbG9yIjoiIzMzNzNkYyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSGRwWkhSb1BTSnpOalFpSUdobGFXZG9kRDBpTlRZMElpQjJhV1YzUW05NFBTSXdJREFnTlRZMElEVTJOQ0krUEdOcGNtTnNaU0JqZUQwaU1qZ3lJaUJqZVQwaU1qZ3lJaUJ5UFNJME1DSWdabWxzYkQwaUl6TXpOek5rWXlJdlBqeDBaWGgwSUhnOUlqSTRNaUlnZVQwaU1qa3lJaUJtYVd4c1BTSWpabVptSWlCbWIyNTBMWE5wZW1VOUlqRTRJaUIwWlhoMExXRnVZMmh2Y2owaWJXbGtaR3hsSWo1SlRqd3ZkR1Y0ZEQ0OEwzTjJaejQ9Iiwic2l6ZXMiOiI1MTJ4NTEyIiwidHlwZSI6ImltYWdlL3N2Zyt4bWwifV19">
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiSW52ZW50b3J5IE1hbmFnZXIiLCJzaG9ydF9uYW1lIjoiSW52ZW50b3J5IiwiZGVzY3JpcHRpb24iOiJNeSBwZXJzb25hbCBpbnZlbnRvcnkgbWFuYWdlbWVudCBhcHAiLCJzdGFydF91cmwiOiIvIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2ZmZmZmZiIsInRoZW1lX2NvbG9yIjoiIzMzNzNkYyIsImljb25zIjpbeyJzcmMiOiJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSGRwWkhSb1BTSnpOalFpSUdobGFXZG9kRDBpTlRZMElpQjJhV1YzUW05NFBTSXdJREFnTlRZMElEVTJOQ0krUEdOcGNtTnNaU0JqZUQwaU1qZ3lJaUJqZVQwaU1qZ3lJaUJ5UFNJME1DSWdabWxzYkQwaUl6TXpOek5rWXlJdlBqeDBaWGgwSUhnOUlqSTRNaUlnZVQwaU1qa3hJaUJtYVd4c1BTSWpabVptSWlCbWIyNTBMWE5wZW1VOUlqRTRJaUIwWlhoMExXRnVZMmh2Y2owaWJXbGtaR3hsSWo1SlRqd3ZkR1Y0ZEQ0OEwzTjJaejQ9Iiwic2l6ZXMiOiI1MTJ4NTEyIiwidHlwZSI6ImltYWdlL3N2Zyt4bWwifV19">
     <meta name="theme-color" content="#3373dc">
     <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1NjQiIGhlaWdodD0iNTY0IiB2aWV3Qm94PSIwIDAgNTY0IDU2NCI+PGNpcmNsZSBjeD0iMjgyIiBjeT0iMjgyIiByPSI0MCIgZmlsbD0iIzMzNzNkYyIvPjx0ZXh0IHg9IjI4MiIgeT0iMjkyIiBmaWxsPSIjZmZmIiBmb250LXNpemU9IjE4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5JTjwvdGV4dD48L3N2Zz4=">
+    
+    <!-- Barcode Scanning Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
     
     <style>
         * {
@@ -139,6 +142,14 @@
             background: #c82333;
         }
 
+        .btn-success {
+            background: #28a745;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
         .custom-fields {
             background: #f8f9fa;
             padding: 20px;
@@ -229,6 +240,114 @@
             display: none;
         }
 
+        /* Barcode Scanner Styles */
+        .scanner-container {
+            position: relative;
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        #scanner {
+            width: 100%;
+            max-width: 400px;
+            height: 300px;
+            margin: 0 auto;
+            display: block;
+        }
+
+        .scanner-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .scanner-line {
+            position: absolute;
+            top: 50%;
+            left: 10%;
+            right: 10%;
+            height: 2px;
+            background: #ff0000;
+            transform: translateY(-50%);
+            box-shadow: 0 0 10px #ff0000;
+            animation: scanLine 2s ease-in-out infinite;
+        }
+
+        @keyframes scanLine {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .scanner-corners {
+            position: absolute;
+            top: 20%;
+            left: 20%;
+            right: 20%;
+            bottom: 20%;
+            border: 2px solid #00ff00;
+            border-radius: 8px;
+        }
+
+        .scanner-corners::before,
+        .scanner-corners::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #00ff00;
+        }
+
+        .scanner-corners::before {
+            top: -3px;
+            left: -3px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .scanner-corners::after {
+            bottom: -3px;
+            right: -3px;
+            border-left: none;
+            border-top: none;
+        }
+
+        .scanner-result {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .scanner-error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .scanner-status {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 10px;
+            border-radius: 6px;
+            margin: 10px 0;
+            text-align: center;
+            font-size: 14px;
+        }
+
         @media (max-width: 768px) {
             .field-config {
                 flex-direction: column;
@@ -245,6 +364,10 @@
             .items-table {
                 font-size: 14px;
             }
+
+            #scanner {
+                height: 250px;
+            }
         }
     </style>
 </head>
@@ -252,7 +375,7 @@
     <div class="container">
         <div class="header">
             <h1>📦 My Inventory Manager</h1>
-            <p>Simple, powerful inventory tracking</p>
+            <p>Simple, powerful inventory tracking with camera scanning</p>
         </div>
 
         <div class="tabs">
@@ -265,10 +388,34 @@
         <!-- Items Tab -->
         <div id="items-tab" class="content">
             <div class="barcode-section">
-                <h3>📱 Barcode Scanner</h3>
-                <p>Click the button below to scan a barcode (requires camera access)</p>
-                <button class="btn" onclick="startBarcodeScanner()">Start Scanner</button>
-                <div id="barcode-result" style="margin-top: 10px; font-weight: bold;"></div>
+                <h3>📱 Camera Barcode Scanner</h3>
+                <p>Scan barcodes using your device's camera</p>
+                
+                <div style="margin: 15px 0;">
+                    <button class="btn btn-success" id="start-scanner-btn" onclick="startCameraScanner()">
+                        📸 Start Camera Scanner
+                    </button>
+                    <button class="btn btn-secondary" id="stop-scanner-btn" onclick="stopScanner()" style="display: none;">
+                        ⏹️ Stop Scanner
+                    </button>
+                    <button class="btn" onclick="manualBarcodeEntry()">
+                        ⌨️ Enter Manually
+                    </button>
+                </div>
+
+                <div class="scanner-container" id="scanner-container" style="display: none;">
+                    <canvas id="scanner"></canvas>
+                    <div class="scanner-overlay">
+                        <div class="scanner-line"></div>
+                        <div class="scanner-corners"></div>
+                    </div>
+                </div>
+
+                <div id="scanner-status" class="scanner-status" style="display: none;">
+                    Initializing camera...
+                </div>
+
+                <div id="barcode-result" style="display: none;"></div>
             </div>
 
             <h2>Add New Item</h2>
@@ -280,7 +427,7 @@
                     </div>
                     <div class="form-group">
                         <label for="item-barcode">Barcode</label>
-                        <input type="text" id="item-barcode">
+                        <input type="text" id="item-barcode" placeholder="Scan or enter barcode">
                     </div>
                 </div>
                 <div id="custom-fields-form"></div>
@@ -378,9 +525,10 @@
     </div>
 
     <script>
-        // Data Storage (using browser's local storage)
+        // Data Storage
         let inventory = JSON.parse(localStorage.getItem('inventory')) || [];
         let customFields = JSON.parse(localStorage.getItem('customFields')) || [];
+        let scannerActive = false;
 
         // Save data to localStorage
         function saveData() {
@@ -391,6 +539,11 @@
 
         // Tab switching
         function showTab(tabName) {
+            // Stop scanner when switching tabs
+            if (scannerActive) {
+                stopScanner();
+            }
+
             // Hide all tabs
             document.querySelectorAll('.content').forEach(tab => {
                 tab.classList.add('hidden');
@@ -409,6 +562,130 @@
             if (tabName === 'reports') {
                 updateReports();
             }
+        }
+
+        // Camera Barcode Scanner Functions
+        function startCameraScanner() {
+            const scannerContainer = document.getElementById('scanner-container');
+            const statusDiv = document.getElementById('scanner-status');
+            const startBtn = document.getElementById('start-scanner-btn');
+            const stopBtn = document.getElementById('stop-scanner-btn');
+            
+            // Show scanner elements
+            scannerContainer.style.display = 'block';
+            statusDiv.style.display = 'block';
+            startBtn.style.display = 'none';
+            stopBtn.style.display = 'inline-block';
+            
+            statusDiv.innerHTML = 'Requesting camera access...';
+            statusDiv.className = 'scanner-status';
+
+            // Initialize Quagga barcode scanner
+            Quagga.init({
+                inputStream: {
+                    name: "Live",
+                    type: "LiveStream",
+                    target: document.querySelector('#scanner'),
+                    constraints: {
+                        width: 400,
+                        height: 300,
+                        facingMode: "environment" // Use back camera on mobile
+                    }
+                },
+                locator: {
+                    patchSize: "medium",
+                    halfSample: true
+                },
+                numOfWorkers: 2,
+                frequency: 10,
+                decoder: {
+                    readers: [
+                        "code_128_reader",
+                        "ean_reader", 
+                        "ean_8_reader",
+                        "code_39_reader",
+                        "code_39_vin_reader",
+                        "codabar_reader",
+                        "upc_reader",
+                        "upc_e_reader",
+                        "i2of5_reader"
+                    ]
+                },
+                locate: true
+            }, function(err) {
+                if (err) {
+                    console.error('QuaggaJS initialization error:', err);
+                    showScannerError('Failed to access camera. Please ensure you have granted camera permissions and try again.');
+                    return;
+                }
+                
+                console.log("QuaggaJS initialization finished. Ready to start");
+                statusDiv.innerHTML = 'Camera ready! Point at a barcode to scan';
+                statusDiv.className = 'scanner-status';
+                scannerActive = true;
+                Quagga.start();
+            });
+
+            // Listen for successful barcode detection
+            Quagga.onDetected(function(result) {
+                const code = result.codeResult.code;
+                console.log("Barcode detected:", code);
+                
+                // Show success message
+                showBarcodeResult(code);
+                
+                // Fill in the barcode field
+                document.getElementById('item-barcode').value = code;
+                
+                // Stop scanning after successful detection
+                setTimeout(() => {
+                    stopScanner();
+                }, 1000);
+            });
+        }
+
+        function stopScanner() {
+            if (scannerActive) {
+                Quagga.stop();
+                scannerActive = false;
+            }
+            
+            // Hide scanner elements
+            document.getElementById('scanner-container').style.display = 'none';
+            document.getElementById('scanner-status').style.display = 'none';
+            document.getElementById('barcode-result').style.display = 'none';
+            
+            // Reset buttons
+            document.getElementById('start-scanner-btn').style.display = 'inline-block';
+            document.getElementById('stop-scanner-btn').style.display = 'none';
+        }
+
+        function manualBarcodeEntry() {
+            const barcode = prompt('Enter barcode manually:');
+            if (barcode && barcode.trim()) {
+                document.getElementById('item-barcode').value = barcode.trim();
+                showBarcodeResult(barcode.trim());
+            }
+        }
+
+        function showBarcodeResult(barcode) {
+            const resultDiv = document.getElementById('barcode-result');
+            resultDiv.innerHTML = `📱 Scanned: <strong>${barcode}</strong>`;
+            resultDiv.className = 'scanner-result';
+            resultDiv.style.display = 'block';
+        }
+
+        function showScannerError(message) {
+            const resultDiv = document.getElementById('barcode-result');
+            resultDiv.innerHTML = `❌ ${message}`;
+            resultDiv.className = 'scanner-error';
+            resultDiv.style.display = 'block';
+            
+            // Reset scanner UI
+            document.getElementById('scanner-container').style.display = 'none';
+            document.getElementById('scanner-status').style.display = 'none';
+            document.getElementById('start-scanner-btn').style.display = 'inline-block';
+            document.getElementById('stop-scanner-btn').style.display = 'none';
         }
 
         // Custom field management
@@ -543,6 +820,8 @@
             
             // Clear form
             this.reset();
+            // Clear barcode result display
+            document.getElementById('barcode-result').style.display = 'none';
             alert('Item added successfully!');
         };
 
@@ -586,16 +865,6 @@
                 
                 return `<tr>${row}</tr>`;
             }).join('');
-        }
-
-        // Barcode scanning (simplified version - uses prompt for demo)
-        function startBarcodeScanner() {
-            // In a real app, this would access the camera
-            const barcode = prompt('Enter barcode manually (camera scanning requires additional setup):');
-            if (barcode) {
-                document.getElementById('item-barcode').value = barcode;
-                document.getElementById('barcode-result').innerHTML = `📱 Scanned: ${barcode}`;
-            }
         }
 
         // Export functionality
@@ -684,6 +953,7 @@
                     <strong>${item.name}</strong>
                     <div style="color: #666; font-size: 14px;">
                         Added on ${new Date(item.dateAdded).toLocaleDateString()}
+                        ${item.barcode ? `• Barcode: ${item.barcode}` : ''}
                     </div>
                 </div>
             `).join('');
@@ -700,10 +970,14 @@
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('data:application/javascript;base64,c2VsZi5hZGRFdmVudExpc3RlbmVyKCdpbnN0YWxsJywgZXZlbnQgPT4gewogIGNvbnNvbGUubG9nKCdTZXJ2aWNlIHdvcmtlciBpbnN0YWxsZWQnKTsKfSk7Cg==');
             }
+
+            // Stop scanner if user navigates away
+            window.addEventListener('beforeunload', function() {
+                if (scannerActive) {
+                    stopScanner();
+                }
+            });
         }
 
         // Start the app
         initApp();
-    </script>
-</body>
-</html>
